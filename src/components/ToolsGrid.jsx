@@ -1,11 +1,23 @@
 import { useState, useEffect } from "react";
-
-import { Calendar, MoreVertical } from "lucide-react";
+import EditToolModal from './EditToolModal';
+import { Calendar } from "lucide-react";
 
 export default function ToolsGrid() {
 
   const [tools, setTools] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTool, setSelectedTool] = useState(null);
+
+  const handleDelete = (id) => {
+    setTools(tools.filter(tool => tool.id !== id));
+  };
+
+  const handleSave = (updatedTool) => {
+    setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
+    setIsModalOpen(false);
+  };
 
   const statusStyles = {
     active:  "bg-gradient-to-r from-emerald-400 to-emerald-600",
@@ -29,8 +41,7 @@ export default function ToolsGrid() {
     };
 
     fetchTools();
-  }, []); // Le tableau vide [] assure que l'appel ne se fait qu'UNE fois au montage
-  console.log(tools)
+  }, []);
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mt-8">
       {/* Header de la carte */}
@@ -56,10 +67,9 @@ export default function ToolsGrid() {
         {/* Liste des outils */}
         <div className="space-y-1">
           {tools.map((tool, index) => (
-            <div 
-              key={index} 
-              className="grid grid-cols-5 gap-x-8 items-center p-2 rounded-xl hover:bg-gray-50 transition-colors group cursor-pointer"
-            >
+            <div key={index} onClick={() => setSelectedRow(index)}
+            className={`grid grid-cols-5 gap-x-8 items-center p-2 rounded-xl transition-colors cursor-pointer
+            ${selectedRow === index ? "bg-gray-50" : "hover:bg-gray-50"}`}>
               {/* Tool + Icon */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
@@ -70,7 +80,9 @@ export default function ToolsGrid() {
                     onError={(e) => { e.target.style.display = 'none'; }}
                 />
                 </div>
-                <span className="font-bold truncate text-gray-900">{tool.name ? tool.name : "Inconnu"}</span>
+                <span className="font-bold truncate text-gray-900">
+                    {tool.name ? tool.name : "Inconnu"}
+                </span>
               </div>
 
               {/* Department */}
@@ -93,15 +105,31 @@ export default function ToolsGrid() {
                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] tracking-wider font-bold text-white ${statusStyles[tool.status?.toLowerCase()]}`}>
                     {tool.status ? tool.status.charAt(0).toUpperCase() + tool.status.slice(1).toLowerCase() : "?"}
                 </span>
-                
-                {/*<button className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded-md">
-                    <MoreVertical size={16} />
-                </button>*/}
+
+                {selectedRow === index && (
+                    <div className="flex gap-2 ml-4">
+                    <button className="px-2.5 py-0.5 rounded-full text-[10px] bg-gradient-to-r from-orange-500 to-red-500 text-white"
+                    onClick={() => {setSelectedTool(tool); setIsModalOpen(true);}}>
+                        Edit
+                    </button>
+
+                    <button className="px-2.5 py-0.5 rounded-full text-[10px] bg-gradient-to-r from-pink-500 to-rose-500 text-white"
+                    onClick={() => handleDelete(tool.id)}>
+                        Delete
+                    </button>
+                    </div>
+                )}
+                </div>
               </div>
-            </div>
           ))}
         </div>
       </div>
+      <EditToolModal 
+        isOpen={isModalOpen}
+        tool={selectedTool}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+      />
     </div>
   );
 }
