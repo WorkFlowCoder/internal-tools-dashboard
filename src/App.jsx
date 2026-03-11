@@ -3,6 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import Tools from "./pages/Tools";
 import Analytics from "./pages/Analytics";
 import Navbar from "./components/Navbar";
+import ToolDetail from "./pages/ToolDetail";
 //import { Zap, TradingUp, Wrench, Building2, Users, Search, Moon, Bell , Settings} from 'lucide-react';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/tools" element={<Tools />} />
+            <Route path="/tools/:id" element={<ToolDetail />} />
             <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </main>

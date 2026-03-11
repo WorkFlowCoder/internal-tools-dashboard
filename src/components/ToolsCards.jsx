@@ -1,9 +1,9 @@
 import { useState } from "react";
-import EditToolModal from './EditToolModal';
+import ToolModal from './ToolModal';
 import { Calendar, ChevronRight, ChevronLeft } from "lucide-react";
 import ToolRowCard from "./ToolRowCard";
 
-export default function ToolsGrid({tools}) {
+export default function ToolsCards({tools,editTool,deleteTool}) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
@@ -12,11 +12,11 @@ export default function ToolsGrid({tools}) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = (id) => {
-    setTools(tools.filter(tool => tool.id !== id));
+    deleteTool(id);
   };
 
   const handleSave = (updatedTool) => {
-    setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
+    editTool(updatedTool);
     setIsModalOpen(false);
   };
 
@@ -36,15 +36,6 @@ export default function ToolsGrid({tools}) {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mt-8">
-      {/* Header de la carte */}
-      <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-        <h2 className="text-lg font-bold text-gray-900">Recent Tools</h2>
-        <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
-            <Calendar size={14} strokeWidth={2.5} />
-            <span>Last 30 days</span>
-        </div>
-      </div>
-
       {/* Liste des outils */}
         <div className="space-y-3">
             {currentTools.map((tool) => (
@@ -86,7 +77,8 @@ export default function ToolsGrid({tools}) {
                 </div>
             </div>
         </div>
-      <EditToolModal 
+      <ToolModal
+        title={"Modifier "+selectedTool?.name}
         isOpen={isModalOpen}
         tool={selectedTool}
         onClose={() => setIsModalOpen(false)}

@@ -5,6 +5,12 @@ import { Wrench, Users, TrendingUp, Building2 } from "lucide-react";
 
 export default function Dashboard() {
   const [tools, setTools] = useState([]);
+  const deleteTool = (id) => {
+    setTools(tools.filter(tool => tool.id !== id));
+  };
+  const editTool = (updatedTool) => {
+    setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
+  };
   const [loading, setLoading] = useState(true);useEffect(() => {
     const fetchTools = async () => {
       try {
@@ -60,7 +66,7 @@ export default function Dashboard() {
           color="bg-gradient-to-r from-pink-500 to-rose-500"
         />
       </div>
-    <ToolsGrid tools={tools}/>
+    <ToolsGrid tools={tools} editTool={editTool} deleteTool={deleteTool}/>
     </div>
   );
 }

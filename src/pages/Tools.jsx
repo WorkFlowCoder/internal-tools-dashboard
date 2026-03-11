@@ -1,10 +1,13 @@
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import ToolsCards from "../components/ToolsCards";
+import ToolModal from "../components/ToolModal";
 
 export default function Tools() {
   const [tools, setTools] = useState([]);
   const [search, setSearch] = useState("");
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
+
   const [filterDept, setFilterDept] = useState("All");
   const [filterCat, setFilterCategory] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
@@ -25,6 +28,24 @@ export default function Tools() {
     fetchTools();
   }, []);
 
+  const handleCreate = (newToolData) => {
+    console.log(newToolData);
+    const newTool = {
+      ...newToolData,
+      id: crypto.randomUUID(),
+      updated_at: new Date().toISOString(),
+    };
+    console.log(newTool)
+    setTools([newTool, ...tools]);
+  };
+
+  const deleteTool = (id) => {
+    setTools(tools.filter(tool => tool.id !== id));
+  };
+  const editTool = (updatedTool) => {
+    setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
+  };
+
   const categories= ["Communication","Design","Development","Productivity","Project Management",
     "Sales & Marketing","Security","HR","Finance","Analytics"];
   const departements = ["Marketing","Operations","Engineering","Communication","Design"]
@@ -38,13 +59,13 @@ export default function Tools() {
     return matchesSearch && matchesDept && matchesStatus && matchesCat;
   });
 
-
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Tools Directory</h1>
         
-        <button className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white hover:bg-indigo-700 active:scale-95 px-4 py-2 transition-all shadow-sm">
+        <button onClick={() => setIsModalCreateOpen(true)}
+          className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white hover:bg-indigo-700 active:scale-95 px-4 py-2 transition-all shadow-sm">
           <Plus 
             size={20} 
             strokeWidth={2.5} 
@@ -53,6 +74,13 @@ export default function Tools() {
           <span className="font-semibold">Ajouter un tool</span>
         </button>
       </div>
+      <ToolModal
+        title={"Creation d'un tool"}
+        isOpen={isModalCreateOpen}
+        tool={{}}
+        onClose={() => setIsModalCreateOpen(false)}
+        onSave={handleCreate}
+      />
       {/* Barre de Recherche et Filtres */}
       <div className="flex gap-4 my-6">
          <input 
@@ -90,7 +118,7 @@ export default function Tools() {
       </div>
 
       {/* 3. Ton composant Grille à qui on donne la liste filtrée */}
-      <ToolsCards tools={filteredTools} />
+      <ToolsCards tools={filteredTools} editTool={editTool} deleteTool={deleteTool} />
     </div>
   );
 }

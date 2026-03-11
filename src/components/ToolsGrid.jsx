@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import EditToolModal from './EditToolModal';
 import { Calendar, ChevronRight, ChevronLeft } from "lucide-react";
+import ToolModal from '../components/ToolModal';
 
-export default function ToolsGrid({tools}) {
+export default function ToolsGrid({tools,editTool,deleteTool}) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
@@ -11,11 +11,11 @@ export default function ToolsGrid({tools}) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = (id) => {
-    setTools(tools.filter(tool => tool.id !== id));
+    deleteTool(id);
   };
 
   const handleSave = (updatedTool) => {
-    setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
+    editTool(updatedTool);
     setIsModalOpen(false);
   };
 
@@ -143,7 +143,8 @@ export default function ToolsGrid({tools}) {
             </div>
         </div>
       </div>
-      <EditToolModal 
+      <ToolModal 
+        title={"Modifier "+selectedTool?.name}
         isOpen={isModalOpen}
         tool={selectedTool}
         onClose={() => setIsModalOpen(false)}

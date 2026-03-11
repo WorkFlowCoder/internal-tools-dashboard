@@ -1,4 +1,5 @@
-import React from 'react';
+import { Link } from "react-router-dom";
+import { Eye } from 'lucide-react';
 
 const ToolRowCard = ({ tool, isSelected, onSelect, onEdit, onDelete, statusStyles }) => {
   return (
@@ -36,7 +37,7 @@ const ToolRowCard = ({ tool, isSelected, onSelect, onEdit, onDelete, statusStyle
         </div>
       </div>
       
-        <p className="text-xs text-gray-500 text-left" title={tool.description}>
+        <p className="text-xs text-gray-500" title={tool.description}>
             {tool.description || "Aucune description"}
             <br />
             <span className="text-[10px] font-medium italic">
@@ -49,11 +50,11 @@ const ToolRowCard = ({ tool, isSelected, onSelect, onEdit, onDelete, statusStyle
       <div className="grid grid-cols-2 gap-8 px-4 border-l border-gray-50 hidden sm:grid">
         <div className="flex flex-col">
           <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Utilisateurs</span>
-          <span className="font-semibold text-gray-700">{tool.active_users_count ? tool.active_users_count : "n/a"}</span>
+          <span className="font-semibold text-gray-700">{tool.active_users_count ?? "n/a"}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Coût Mensuel</span>
-          <span className="font-bold text-gray-900">{tool.monthly_cost ? "€"+tool.monthly_cost:"n/a"}</span>
+          <span className="font-bold text-gray-900">{tool.monthly_cost !== undefined ? `€${tool.monthly_cost}` : "n/a"}</span>
         </div>
       </div>
 
@@ -78,6 +79,18 @@ const ToolRowCard = ({ tool, isSelected, onSelect, onEdit, onDelete, statusStyle
             <span className="text-[10px] font-bold px-1">DELETE</span>
           </button>
         </div>
+      </div>
+
+      <div className="flex items-center justify-end ml-auto">
+      <Link 
+        to={`/tools/${tool.id}`}
+        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
+        title="Voir les détails">
+        <Eye 
+          size={20} 
+          className="group-hover:scale-110 transition-transform" 
+        />
+      </Link>
       </div>
     </div>
   );
