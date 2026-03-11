@@ -1,8 +1,28 @@
 import KPICard from "../components/KPICard";
 import ToolsGrid from "../components/ToolsGrid";
+import { useState, useEffect } from "react";
 import { Wrench, Users, TrendingUp, Building2 } from "lucide-react";
 
 export default function Dashboard() {
+  const [tools, setTools] = useState([]);
+  const [loading, setLoading] = useState(true);useEffect(() => {
+    const fetchTools = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("https://tt-jsonserver-01.alt-tools.tech/tools"); 
+        const data = await response.json();
+        
+        setTools(data);
+      } catch (error) {
+        console.error("Erreur API:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTools();
+  }, []);
+
   return (
 
   <div className="p-8">
@@ -40,7 +60,7 @@ export default function Dashboard() {
           color="bg-gradient-to-r from-pink-500 to-rose-500"
         />
       </div>
-    <ToolsGrid />
+    <ToolsGrid tools={tools}/>
     </div>
   );
 }
