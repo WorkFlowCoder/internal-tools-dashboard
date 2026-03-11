@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import EditToolModal from './EditToolModal';
-import { Calendar } from "lucide-react";
+import { Calendar, ChevronRight, ChevronLeft } from "lucide-react";
 
 export default function ToolsGrid() {
 
@@ -9,6 +9,9 @@ export default function ToolsGrid() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
+  // Initialisation de la pagination
+  const maxItem = 10;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = (id) => {
     setTools(tools.filter(tool => tool.id !== id));
@@ -42,6 +45,15 @@ export default function ToolsGrid() {
 
     fetchTools();
   }, []);
+
+  // Calcul pour la pagination
+  const indexOfLastItem = currentPage * maxItem;
+  const indexOfFirstItem = indexOfLastItem - maxItem;
+  const currentTools = tools.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Nombre total de pages
+  const totalPages = Math.ceil(tools.length / maxItem);
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mt-8">
       {/* Header de la carte */}
@@ -66,10 +78,11 @@ export default function ToolsGrid() {
 
         {/* Liste des outils */}
         <div className="space-y-1">
-          {tools.map((tool, index) => (
+          {currentTools.map((tool, index) => (
             <div key={index} onClick={() => setSelectedRow(index)}
-            className={`grid grid-cols-5 gap-x-8 items-center p-2 rounded-xl transition-colors cursor-pointer
-            ${selectedRow === index ? "bg-gray-50" : "hover:bg-gray-50"}`}>
+            className={`grid grid-cols-5 gap-x-8 items-center p-2 rounded-xl transition-all duration-200 cursor-pointer
+            ${selectedRow === index ? "bg-gray-300" : "hover:bg-gray-200"} group`}>
+
               {/* Tool + Icon */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
@@ -122,6 +135,33 @@ export default function ToolsGrid() {
                 </div>
               </div>
           ))}
+        </div>
+        {/* Pagination */}
+        <div className="flex justify-center justify-between px-8 py-4 border-t border-gray-100 bg-white rounded-b-2xl sm:flex-row flex-col gap-4">
+            <div className="flex items-center gap-8">
+                
+                <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                <ChevronLeft size={18} />
+                Précédent
+                </button>
+
+                <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Page</span>
+                    <span className="text-sm font-black text-gray-500">{currentPage}</span>
+                    <span className="text-gray-300">/</span>
+                    <span className="text-sm font-black text-gray-500">{totalPages}</span>
+                </div>
+
+                <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                Suivant
+                <ChevronRight size={18} />
+                </button>
+                
+            </div>
         </div>
       </div>
       <EditToolModal 
