@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Zap, Bell, ChevronDown, Settings as SettingsIcon, Search, Menu, X, Moon } from "lucide-react";
+import { Zap, Bell, ChevronDown, Settings as SettingsIcon, Search, Menu, X, Sun , Moon } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,12 +61,13 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-1 text-gray-500 border-l pl-3 border-gray-100">
+            <ThemeToggle />
             <button className="relative p-2 hover:bg-gray-100 rounded-full">
               <Bell size={19} />
               <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full border border-white"></span>
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <Moon size={19} />
+            <button className="relative p-2 hover:bg-gray-100 rounded-full">
+              <SettingsIcon size={19} />
             </button>
           </div>
           
@@ -113,7 +115,7 @@ export default function Navbar() {
 
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex gap-4">
-               <Moon size={20} className="text-gray-500" />
+               <ThemeToggle />
                <Bell size={20} className="text-gray-500" />
                <SettingsIcon size={20} className="text-gray-500" />
             </div>

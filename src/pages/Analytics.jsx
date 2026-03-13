@@ -29,10 +29,15 @@ export default function Analytics() {
   // 2. Dépenses par département (Pie)
   const deptData = Object.entries(
     tools.reduce((acc, tool) => {
-      acc[tool.owner_department] = (acc[tool.owner_department] || 0) + tool.monthly_cost;
+      let deptName = tool.owner_department 
+        ? tool.owner_department.trim().charAt(0).toUpperCase() + tool.owner_department.slice(1).toLowerCase()
+        : "Autre";
+      const cost = Number(tool.monthly_cost) || 0;
+      acc[deptName] = (acc[deptName] || 0) + cost;
       return acc;
     }, {})
-  ).map(([name, value]) => ({ name, value }));
+  ).map(([name, value]) => ({ name, value }))
+  .sort((a, b) => b.value - a.value);
 
   // 3. Top 5 outils les plus chers (Bar)
   const topToolsData = [...tools]
@@ -114,28 +119,35 @@ export default function Analytics() {
           </ResponsiveContainer>
         </div>
 
-        {/* PIE CHART - Department Costs */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+        {/* PIE CHART*/}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-6">Répartition par Département</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={deptData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name}: €${value}`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {deptData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => `€${value.toLocaleString()}`} />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={deptData} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={5} dataKey="value" label={false}>
+                  {deptData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} stroke="none" />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          {/* légende */}
+          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3">
+            {deptData.map((entry, index) => (
+              <div key={entry.name} className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
+                <div className="flex justify-between w-full text-xs">
+                  <span className="text-gray-500 truncate">{entry.name}</span>
+                  <span className="font-bold text-gray-900 ml-2">
+                    {((entry.value / totalCost) * 100).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
