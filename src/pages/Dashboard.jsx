@@ -19,6 +19,30 @@ export default function Dashboard() {
     }
   };
 
+  const sortToolsDept = (direction) => {
+    const sorted = [...tools].sort((a, b) => {
+      const deptA = (a.owner_department || "").toLowerCase().trim();
+      const deptB = (b.owner_department || "").toLowerCase().trim();
+
+      if (deptA < deptB) return direction === 'asc' ? -1 : 1;
+      if (deptA > deptB) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });  
+    setTools(sorted);// Mise a jour de l'état avec la liste triée
+  };
+
+    const sortToolName = (direction) => {
+    const sorted = [...tools].sort((a, b) => {
+      const deptA = (a.name || "").toLowerCase().trim();
+      const deptB = (b.name || "").toLowerCase().trim();
+
+      if (deptA < deptB) return direction === 'asc' ? -1 : 1;
+      if (deptA > deptB) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });  
+    setTools(sorted);// Mise a jour de l'état avec la liste triée
+  };
+
   const editTool = async (updatedTool) => {
     setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
     try {
@@ -69,7 +93,7 @@ export default function Dashboard() {
           color="bg-gradient-to-r from-pink-500 to-rose-500"
         />
       </div>
-    <ToolsGrid tools={tools} editTool={editTool} deleteTool={handleDelete}/>
+    <ToolsGrid tools={tools} editTool={editTool} deleteTool={handleDelete} sortToolsDept={sortToolsDept} sortToolName={sortToolName}/>
     </div>
   );
 }

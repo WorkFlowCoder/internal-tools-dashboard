@@ -1,15 +1,29 @@
 import { useState } from "react";
-import { Calendar, ChevronRight, ChevronLeft } from "lucide-react";
+import { Calendar, ChevronRight, ChevronLeft, Edit3, Trash2 } from "lucide-react";
 import ToolModal from './ToolModal';
 import ToolImg from "./ToolImg";
 
-export default function ToolsGrid({tools,editTool,deleteTool}) {
+export default function ToolsGrid({tools,editTool,deleteTool,sortToolsDept,sortToolName}) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
   // Initialisation de la pagination
   const maxItem = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortDept, setSortDept] = useState({ key: null, direction: 'desc' });
+  const [sortName, setSortName] = useState({ key: null, direction: 'desc' });
+
+  const requestSortDept = (key) => {
+    const newDirection = sortDept.direction === 'asc' ? 'desc' : 'asc';    
+    setSortDept({ key, direction: newDirection });
+    sortToolsDept(newDirection);
+  };
+
+  const requestSortName = (key) => {
+    const newDirection = sortName.direction === 'asc' ? 'desc' : 'asc';    
+    setSortName({ key, direction: newDirection });
+    sortToolName(newDirection);
+  };
 
   const handleDelete = (id) => {
     deleteTool(id);
@@ -45,72 +59,73 @@ export default function ToolsGrid({tools,editTool,deleteTool}) {
         </div>
       </div>
 
-      {/* Grille des colonnes */}
-      <div className="p-6">
-        {/* En-tête de la grille */}
-        <div className="grid grid-cols-5 gap-x-8 pb-4 text-sm font-semibold text-gray-400 border-b border-gray-50 mb-4 px-2">
-          <div>Tools</div>
-          <div>Departments</div>
-          <div>Users</div>
-          <div>Monthly Cost</div>
-          <div>Status</div>
+
+      <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_100px_80px] gap-x-4 pb-4 text-sm font-semibold text-gray-400 border-b border-gray-50 mb-4 px-2">
+        <div className="cursor-pointer hover:text-gray-900 transition-colors flex items-center gap-1"
+          onClick={() => requestSortName('name')}>
+          Name</div>
+        <div className="cursor-pointer hover:text-gray-900 transition-colors flex items-center gap-1"
+          onClick={() => requestSortDept('owner_department')}>
+          Departments
         </div>
+        <div>Users</div>
+        <div>Monthly Cost</div>
+        <div>Status</div>
+        <div>Actions</div>
+      </div>
 
-        {/* Liste des outils */}
-        <div className="space-y-1">
-          {currentTools.map((tool) => (
-            <div key={tool.id} onClick={() => setSelectedRow(tool.id)}
-            className={`grid grid-cols-5 gap-x-8 items-center p-2 rounded-xl transition-all duration-200 cursor-pointer
-            ${selectedRow === tool.id ? "bg-gray-300" : "hover:bg-gray-200"} group`}>
-
-              {/* Tool + Icon */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
+      {/* 2. La ligne d'outil */}
+      <div className="space-y-1">
+        {currentTools.map((tool) => (
+          <div 
+            key={tool.id} 
+            onClick={() => setSelectedRow(tool.id)}
+            className={`grid items-center p-2 rounded-xl transition-all duration-200 cursor-pointer
+            /* Grille : Status (100px) et Actions (80px) sont verrouillés */
+            grid-cols-[2fr_1fr_1fr_1fr_100px_80px] gap-x-4
+            ${selectedRow === tool.id ? "bg-gray-200" : "hover:bg-gray-100"} group`}
+          >
+            {/* Infos classiques avec truncate pour protéger l'espace */}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center shrink-0 shadow-sm">
                 <ToolImg tool={tool} className="w-8 h-8 object-contain" />
+              </div>
+              <span className="font-bold truncate text-gray-900 text-sm">{tool.name ?? "Inconnu"}</span>
+            </div>
+
+            <div className="text-sm text-gray-600 truncate min-w-0">{tool.owner_department ?? "n/a"}</div>
+            <div className="text-sm text-gray-600 font-medium truncate min-w-0">{tool.active_users_count ?? "n/a"}</div>
+            <div className="text-sm text-gray-600 truncate min-w-0">{tool.monthly_cost ? "€"+tool.monthly_cost : "n/a"}</div>
+
+            {/* Colonne Status : Largeur fixe, pas de mouvement */}
+            <div className="flex justify-start">
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] tracking-wider font-bold text-white shadow-sm shrink-0 ${statusStyles[tool.status?.toLowerCase()]}`}>
+                {tool.status ? tool.status.charAt(0).toUpperCase() + tool.status.slice(1).toLowerCase() : "?"}
+              </span>
+            </div>
+
+            {/* Colonne Actions : Alignée à droite, largeur fixe */}
+            <div className="flex items-center justify-end min-w-[80px]">
+              {selectedRow === tool.id && (
+                <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-200">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelectedTool(tool); setIsModalOpen(true); }}
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md hover:scale-110 transition-transform shrink-0"
+                  >
+                    <Edit3 size={14} />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDelete(tool.id); }}
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md hover:scale-110 transition-transform shrink-0"
+                  >
+                    <Trash2 size={14} />
+                  </button>
                 </div>
-                <span className="font-bold truncate text-gray-900 block max-w-[200px]">
-                    {tool.name ?? "Inconnu"}
-                </span>
-              </div>
-
-              {/* Department */}
-              <div className="text-sm text-gray-600">
-                {tool.owner_department ?? "n/a"}
-              </div>
-
-              {/* Users */}
-              <div className="text-sm text-gray-600 font-medium">
-                {tool.active_users_count ? tool.active_users_count : "n/a"}
-              </div>
-
-              {/* Cost */}
-              <div className="text-sm text-gray-600">
-                {tool.monthly_cost ? "€"+tool.monthly_cost:"n/a"}
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center justify-between">
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] tracking-wider font-bold text-white ${statusStyles[tool.status?.toLowerCase()]}`}>
-                    {tool.status ? tool.status.charAt(0).toUpperCase() + tool.status.slice(1).toLowerCase() : "?"}
-                </span>
-
-                {selectedRow === tool.id && (
-                    <div className="flex gap-2 ml-4">
-                    <button className="px-2.5 py-1 rounded-full text-[10px] bg-gradient-to-r from-orange-500 to-red-500 text-white"
-                    onClick={() => {setSelectedTool(tool); setIsModalOpen(true);}}>
-                        Edit
-                    </button>
-
-                    <button className="px-2.5 py-1 rounded-full text-[10px] bg-gradient-to-r from-pink-500 to-rose-500 text-white"
-                    onClick={() => handleDelete(tool.id)}>
-                        Delete
-                    </button>
-                    </div>
-                )}
-                </div>
-              </div>
-          ))}
-        </div>
+              )}
+            </div>
+          </div>
+          
+        ))}
         {/* Pagination */}
         <div className="flex justify-center justify-between px-8 py-4 border-t border-gray-100 bg-white rounded-b-2xl sm:flex-row flex-col gap-4">
             <div className="flex items-center gap-8">

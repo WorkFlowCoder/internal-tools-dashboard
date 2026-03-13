@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Eye } from 'lucide-react';
 import ToolImg from "./ToolImg";
+import { Edit3, Trash2 } from "lucide-react";
 
 const ToolRowCard = ({ tool, isSelected, onSelect, onEdit, onDelete, statusStyles }) => {
   return (
@@ -55,38 +56,39 @@ const ToolRowCard = ({ tool, isSelected, onSelect, onEdit, onDelete, statusStyle
       </div>
 
       {/* 3. Statut & Actions */}
-      <div className="flex items-center gap-2 justify-between flex-wrap pt-2 border-t border-gray-50">
+      <div className="flex items-center justify-between pt-2 border-t border-gray-50">
         <span className={`px-2 py-0.5 rounded text-[9px] tracking-wider font-bold text-white shadow-sm shrink-0 ${statusStyles[tool.status?.toLowerCase()]}`}>
-            {tool.status ? tool.status.charAt(0).toUpperCase() + tool.status.slice(1).toLowerCase() : "?"}
+          {tool.status ? tool.status.charAt(0).toUpperCase() + tool.status.slice(1).toLowerCase() : "?"}
         </span>
 
-        {/* Actions conditionnelles */}
-        <div className={`flex gap-1 transition-all duration-200 ${isSelected ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-          <button 
-            onClick={(e) => { e.stopPropagation(); onEdit(tool); }}
-            className="px-1.5 py-0.5 rounded text-[8px] bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold"
-          >
-            Edit
-          </button>
-          <button 
-            onClick={(e) => { e.stopPropagation(); onDelete(tool.id); }}
-            className="px-1.5 py-0.5 rounded text-[8px] bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold"
-          >
-            Del
-          </button>
-        </div>
+        <div className="flex items-center gap-3">
+          <div className={`flex items-center gap-3 transition-all duration-200 ${isSelected ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+            <button
+              onClick={() => onEdit(tool)}
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md hover:scale-110 active:scale-90 transition-transform"
+              title="Modifier"
+            >
+              <Edit3 size={18} />
+            </button>
 
-        <Link 
-          to={`/tools/${tool.id}`}
-          className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-all duration-200 shrink-0"
-          title="Voir les détails"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Eye 
-            size={14} 
-            className="transition-transform hover:scale-110" 
-          />
-        </Link>
+            <button
+              onClick={() => handleDeleteClick(tool.id)}
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md hover:scale-110 active:scale-90 transition-transform"
+              title="Supprimer"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
+
+          <Link 
+            to={`/tools/${tool.id}`}
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md hover:scale-110 active:scale-90 transition-transform"
+            title="Voir les détails"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Eye size={18} className="transition-transform hover:scale-110" />
+          </Link>
+        </div>
       </div>
     </div>
   );
