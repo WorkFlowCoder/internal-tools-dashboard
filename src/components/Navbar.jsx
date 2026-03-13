@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Zap, Moon, Bell, ChevronDown, Settings as SettingsIcon, Search, Menu, X } from "lucide-react";
+import { Zap, Bell, ChevronDown, Settings as SettingsIcon, Search, Menu, X, Moon } from "lucide-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,10 +60,12 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-1 text-gray-500 border-l pl-3 border-gray-100">
-            <button className="p-2 hover:bg-gray-100 rounded-full"><Moon size={19} /></button>
             <button className="relative p-2 hover:bg-gray-100 rounded-full">
               <Bell size={19} />
               <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full border border-white"></span>
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-full">
+              <Moon size={19} />
             </button>
           </div>
           

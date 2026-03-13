@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Calendar, ChevronRight, ChevronLeft } from "lucide-react";
-import ToolModal from '../components/ToolModal';
+import ToolModal from './ToolModal';
+import ToolImg from "./ToolImg";
 
 export default function ToolsGrid({tools,editTool,deleteTool}) {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -65,12 +66,7 @@ export default function ToolsGrid({tools,editTool,deleteTool}) {
               {/* Tool + Icon */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
-                <img 
-                  src={tool.icon_url}
-                  alt={tool.name} 
-                  className="w-8 h-8 object-contain"
-                  onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${tool.name}&background=f3f4f6&color=6366f1`; }}
-                />
+                <ToolImg tool={tool} className="w-8 h-8 object-contain" />
                 </div>
                 <span className="font-bold truncate text-gray-900 block max-w-[200px]">
                     {tool.name ?? "Inconnu"}
@@ -100,12 +96,12 @@ export default function ToolsGrid({tools,editTool,deleteTool}) {
 
                 {selectedRow === tool.id && (
                     <div className="flex gap-2 ml-4">
-                    <button className="px-2.5 py-0.5 rounded-full text-[10px] bg-gradient-to-r from-orange-500 to-red-500 text-white"
+                    <button className="px-2.5 py-1 rounded-full text-[10px] bg-gradient-to-r from-orange-500 to-red-500 text-white"
                     onClick={() => {setSelectedTool(tool); setIsModalOpen(true);}}>
                         Edit
                     </button>
 
-                    <button className="px-2.5 py-0.5 rounded-full text-[10px] bg-gradient-to-r from-pink-500 to-rose-500 text-white"
+                    <button className="px-2.5 py-1 rounded-full text-[10px] bg-gradient-to-r from-pink-500 to-rose-500 text-white"
                     onClick={() => handleDelete(tool.id)}>
                         Delete
                     </button>

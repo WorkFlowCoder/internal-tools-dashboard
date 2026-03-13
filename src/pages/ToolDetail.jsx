@@ -1,29 +1,22 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Globe, Building2, Users, CreditCard, Clock
-} from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Globe, Building2, Users, CreditCard, Clock} from 'lucide-react';
+import { useEffect } from 'react';
+import ToolImg from '../components/ToolImg';
+import { useTool } from '../hooks/useTool';
 
 export default function ToolDetail() {
-  const { id } = useParams(); // Récupère le "id" de l'URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [tool, setTool] = useState(null);
-
+  const { tool, loading, error } = useTool(id);
   useEffect(() => {
-    // On refait un fetch pour avoir la donnée fraîche de CET outil
-    fetch(`https://tt-jsonserver-01.alt-tools.tech/tools?id=${id}`)
-      .then(res => res.json())
-        .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-            setTool(data[0]);
-        } else {
-            setTool(null);
-            navigate("/", { replace: true });
-        }
-      })
-  }, [id]);
+    if ((!loading && !tool && !error)) {
+      navigate("/", { replace: true });
+    }
+  }, [loading, tool, error, navigate]);
 
-  if (!tool) return <div className="p-8">Chargement...</div>;
+if (loading) return <div>Chargement...</div>;
+if (error) return <div>Erreur: {error}</div>;
+if (!tool) return null;
 
 return (
   <div className="p-8 max-w-5xl mx-auto space-y-6">
@@ -31,29 +24,24 @@ return (
     <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-6">
-            <img 
-            src={tool.icon_url}
-            alt={tool.name} 
-            className="w-24 h-24 rounded-3xl shadow-inner border border-gray-50"
-            onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${tool.name}&background=f3f4f6&color=6366f1`; }}
-          />
+          <ToolImg tool={tool} className="w-24 h-24 rounded-3xl shadow-inner border border-gray-50" />
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-4xl font-bold text-gray-900">{tool.name}</h1>
+              <h1 className="text-4xl font-bold text-gray-900">{tool?.name}</h1>
               <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                tool.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 
-                tool.status === 'expiring' ? 'bg-orange-50 text-orange-600' : 'bg-gray-100 text-gray-500'
+                tool?.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 
+                tool?.status === 'expiring' ? 'bg-orange-50 text-orange-600' : 'bg-gray-100 text-gray-500'
               }`}>
-                {tool.status}
+                {tool?.status}
               </span>
             </div>
             <p className="text-gray-500 flex items-center gap-2">
-              <Building2 size={16} /> {tool.vendor} • {tool.category}
+              <Building2 size={16} /> {tool?.vendor} • {tool?.category}
             </p>
           </div>
         </div>
         
-        <a href={tool.website_url} target="_blank" rel="noreferrer" 
+        <a href={tool?.website_url} target="_blank" rel="noreferrer" 
            className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white hover:bg-indigo-700 active:scale-95 px-4 py-2 transition-all shadow-sm">
           <Globe size={18} /> Visiter le site
         </a>
@@ -62,7 +50,7 @@ return (
       <div className="mt-8 pt-8 border-t border-gray-50">
         <h3 className="text-sm font-bold uppercase text-gray-400 mb-3 ml-1">Description</h3>
         <p className="text-gray-600 text-lg leading-relaxed">
-          {tool.description || "Aucune description disponible."}
+          {tool?.description || "Aucune description disponible."}
         </p>
       </div>
     </div>
@@ -76,7 +64,7 @@ return (
           <Users size={20} />
         </div>
         <p className="text-sm text-gray-500 font-medium">Utilisateurs actifs</p>
-        <p className="text-2xl font-bold text-gray-900">{tool.active_users_count ?? 0}</p>
+        <p className="text-2xl font-bold text-gray-900">{tool?.active_users_count ?? 0}</p>
       </div>
 
       {/* Coût Mensuel */}
@@ -86,7 +74,7 @@ return (
         </div>
         <p className="text-sm text-gray-500 font-medium">Coût Mensuel</p>
         <div className="flex items-baseline gap-2">
-          <p className="text-2xl font-bold text-gray-900">{tool.monthly_cost ?? 0}€</p>
+          <p className="text-2xl font-bold text-gray-900">{tool?.monthly_cost ?? 0}€</p>
         </div>
       </div>
 
@@ -96,7 +84,7 @@ return (
           <Building2 size={20} />
         </div>
         <p className="text-sm text-gray-500 font-medium">Département</p>
-        <p className="text-2xl font-bold text-gray-900 truncate">{tool.owner_department}</p>
+        <p className="text-2xl font-bold text-gray-900 truncate">{tool?.owner_department}</p>
       </div>
 
       {/* Dates */}
@@ -106,7 +94,7 @@ return (
         </div>
         <p className="text-sm text-gray-500 font-medium">Dernière MAJ</p>
         <p className="text-lg font-bold text-gray-900">
-          {new Date(tool.updated_at).toLocaleDateString()}
+          {new Date(tool?.updated_at).toLocaleDateString()}
         </p>
       </div>
 

@@ -4,7 +4,6 @@ import Tools from "./pages/Tools";
 import Analytics from "./pages/Analytics";
 import Navbar from "./components/Navbar";
 import ToolDetail from "./pages/ToolDetail";
-//import { Zap, TradingUp, Wrench, Building2, Users, Search, Moon, Bell , Settings} from 'lucide-react';
 
 function App() {
   return (
@@ -14,7 +13,7 @@ function App() {
         
         {/* On affiche la Navbar */}
         <Navbar />
-
+        
         {/* Le contenu des pages */}
         <main className="container mx-auto">
           <Routes>

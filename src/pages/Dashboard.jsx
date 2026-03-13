@@ -1,33 +1,36 @@
 import KPICard from "../components/KPICard";
 import ToolsGrid from "../components/ToolsGrid";
-import { useState, useEffect } from "react";
 import { Wrench, Users, TrendingUp, Building2 } from "lucide-react";
+import { useTools } from "../hooks/useTools";
+import { useToolActions } from "../hooks/useToolActions";
 
 export default function Dashboard() {
-  const [tools, setTools] = useState([]);
-  const deleteTool = (id) => {
-    setTools(tools.filter(tool => tool.id !== id));
-  };
-  const editTool = (updatedTool) => {
-    setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
-  };
-  const [loading, setLoading] = useState(true);useEffect(() => {
-    const fetchTools = async () => {
+  const { tools, setTools } = useTools();
+  const { updateTool, deleteTool } = useToolActions();
+  
+  const handleDelete = async (id) => {
+    if (window.confirm("Voulez-vous vraiment supprimer cet outil ?")) {
       try {
-        setLoading(true);
-        const response = await fetch("https://tt-jsonserver-01.alt-tools.tech/tools"); 
-        const data = await response.json();
-        
-        setTools(data);
-      } catch (error) {
-        console.error("Erreur API:", error);
-      } finally {
-        setLoading(false);
+        await deleteTool(id);
+        setTools((prev) => prev.filter((t) => t.id !== id));
+      } catch (err) {
+        alert("Erreur lors de la suppression");
       }
-    };
+    }
+  };
 
-    fetchTools();
-  }, []);
+  const editTool = async (updatedTool) => {
+    setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
+    try {
+      const savedTool = await updateTool(updatedTool.id, updatedTool);
+      setTools(prevTools => 
+        prevTools.map(t => t.id === savedTool.id ? savedTool : t)
+      );
+    } catch (err) {
+      console.log(err);
+      alert("Erreur lors de la mise à jour de l'outil.");
+    }
+  };
 
   return (
 
@@ -66,7 +69,7 @@ export default function Dashboard() {
           color="bg-gradient-to-r from-pink-500 to-rose-500"
         />
       </div>
-    <ToolsGrid tools={tools} editTool={editTool} deleteTool={deleteTool}/>
+    <ToolsGrid tools={tools} editTool={editTool} deleteTool={handleDelete}/>
     </div>
   );
 }

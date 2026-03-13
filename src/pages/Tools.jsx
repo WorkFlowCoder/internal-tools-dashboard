@@ -1,49 +1,55 @@
 import { Plus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ToolsCards from "../components/ToolsCards";
 import ToolModal from "../components/ToolModal";
+import { useTools } from "../hooks/useTools";
+import { useToolActions } from "../hooks/useToolActions";
 
 export default function Tools() {
-  const [tools, setTools] = useState([]);
+  const { tools, setTools, loading } = useTools();
+  
   const [search, setSearch] = useState("");
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
-
   const [filterDept, setFilterDept] = useState("All");
   const [filterCat, setFilterCategory] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
-  const [loading, setLoading] = useState(true);useEffect(() => {
-    const fetchTools = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("https://tt-jsonserver-01.alt-tools.tech/tools"); 
-        const data = await response.json();
-        
-        setTools(data);
-      } catch (error) {
-        console.error("Erreur API:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTools();
-  }, []);
+  const { createTool , updateTool, deleteTool } = useToolActions();
 
-  const handleCreate = (newToolData) => {
-    console.log(newToolData);
+  const handleCreate = async (newToolData) => {
     const newTool = {
       ...newToolData,
-      id: crypto.randomUUID(),
       updated_at: new Date().toISOString(),
     };
-    console.log(newTool)
-    setTools([newTool, ...tools]);
+    try {
+      const savedTool = await createTool(newTool);
+      setTools((prev) => [savedTool, ...prev]);
+      setIsModalCreateOpen(false);
+    } catch (err) {
+    }
   };
 
-  const deleteTool = (id) => {
-    setTools(tools.filter(tool => tool.id !== id));
+  const handleDelete = async (id) => {
+    if (window.confirm("Voulez-vous vraiment supprimer cet outil ?")) {
+      try {
+        await deleteTool(id);
+        setTools((prev) => prev.filter((t) => t.id !== id));
+      } catch (err) {
+        alert("Erreur lors de la suppression");
+      }
+    }
   };
-  const editTool = (updatedTool) => {
+
+  const editTool = async (updatedTool) => {
     setTools(tools.map(t => t.id === updatedTool.id ? updatedTool : t));
+    try {
+      const savedTool = await updateTool(updatedTool.id, updatedTool);
+      setTools(prevTools => 
+        prevTools.map(t => t.id === savedTool.id ? savedTool : t)
+      );
+    } catch (err) {
+      console.log(err);
+      alert("Erreur lors de la mise à jour de l'outil.");
+    }
   };
 
   const categories= ["Communication","Design","Development","Productivity","Project Management",
@@ -60,12 +66,12 @@ export default function Tools() {
   });
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
+    <div className="p-4 sm:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Tools Directory</h1>
         
         <button onClick={() => setIsModalCreateOpen(true)}
-          className="group flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white hover:bg-indigo-700 active:scale-95 px-4 py-2 transition-all shadow-sm">
+          className="group w-full sm:w-auto flex items-center justify-center sm:justify-start gap-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white hover:bg-indigo-700 active:scale-95 px-4 py-2 transition-all shadow-sm">
           <Plus 
             size={20} 
             strokeWidth={2.5} 
@@ -82,43 +88,45 @@ export default function Tools() {
         onSave={handleCreate}
       />
       {/* Barre de Recherche et Filtres */}
-      <div className="flex gap-4 my-6">
+      <div className="flex flex-col gap-3 my-6">
          <input 
-           className="border p-2 rounded-xl flex-1"
+           className="border border-gray-200 p-2 rounded-xl flex-1 text-sm"
            placeholder="Rechercher..."
            onChange={(e) => setSearch(e.target.value)}
          />
-         {/* Filtre Departement */}
-         <select onChange={(e) => setFilterDept(e.target.value)} className="border p-2 rounded-xl">
-            <option value="All">Tous les départements</option>
-            {departements.map((dep) => (
-              <option key={dep} value={dep}>
-                {dep}
-              </option>
-            ))}
-         </select>
+         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+           {/* Filtre Departement */}
+           <select onChange={(e) => setFilterDept(e.target.value)} className="border border-gray-200 p-2 rounded-xl text-sm">
+              <option value="All">Tous les départements</option>
+              {departements.map((dep) => (
+                <option key={dep} value={dep}>
+                  {dep}
+                </option>
+              ))}
+           </select>
 
-         {/* Filtre Statut */}
-          <select onChange={(e) => setFilterStatus(e.target.value)} className="border p-2 rounded-xl">
-            <option value="All">Tous les statuts</option>
-            <option value="active"> active</option>
-            <option value="expiring"> expiring</option>
-            <option value="unused"> unused</option>
-          </select>
+           {/* Filtre Statut */}
+            <select onChange={(e) => setFilterStatus(e.target.value)} className="border border-gray-200 p-2 rounded-xl text-sm">
+              <option value="All">Tous les statuts</option>
+              <option value="active"> active</option>
+              <option value="expiring"> expiring</option>
+              <option value="unused"> unused</option>
+            </select>
 
-         {/* Filtre category */}
-          <select onChange={(e) => setFilterCategory(e.target.value)} className="border p-2 rounded-xl">
-            <option value="All">Tous les catégories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+           {/* Filtre category */}
+            <select onChange={(e) => setFilterCategory(e.target.value)} className="border border-gray-200 p-2 rounded-xl text-sm">
+              <option value="All">Tous les catégories</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+         </div>
       </div>
 
       {/* 3. Ton composant Grille à qui on donne la liste filtrée */}
-      <ToolsCards tools={filteredTools} editTool={editTool} deleteTool={deleteTool} />
+      <ToolsCards tools={filteredTools} editTool={editTool} deleteTool={handleDelete} />
     </div>
   );
 }

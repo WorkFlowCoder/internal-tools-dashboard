@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ToolModal from './ToolModal';
-import { Calendar, ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import ToolRowCard from "./ToolRowCard";
 
 export default function ToolsCards({tools,editTool,deleteTool}) {
@@ -8,7 +8,7 @@ export default function ToolsCards({tools,editTool,deleteTool}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
   // Initialisation de la pagination
-  const maxItem = 10;
+  const maxItem = 12;
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = (id) => {
@@ -37,7 +37,7 @@ export default function ToolsCards({tools,editTool,deleteTool}) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mt-8">
       {/* Liste des outils */}
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 p-3 sm:p-6">
             {currentTools.map((tool) => (
             <ToolRowCard 
                 key={tool.id}
@@ -49,32 +49,33 @@ export default function ToolsCards({tools,editTool,deleteTool}) {
                 statusStyles={statusStyles}
             />
             ))}
-            {/* Pagination */}
-            <div className="flex justify-center justify-between px-8 py-4 border-t border-gray-100 bg-white rounded-b-2xl sm:flex-row flex-col gap-4">
-                <div className="flex items-center gap-8">
-                    
-                    <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-                    <ChevronLeft size={18} />
-                    Précédent
-                    </button>
+        </div>
 
-                    <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg border border-gray-100">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">Page</span>
-                        <span className="text-sm font-black text-gray-500">{currentPage}</span>
-                        <span className="text-gray-300">/</span>
-                        <span className="text-sm font-black text-gray-500">{totalPages}</span>
-                    </div>
+        {/* Pagination */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 px-4 sm:px-8 py-4 border-t border-gray-100">
+            <div className="flex items-center gap-2 sm:gap-4">
+                
+                <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-1 text-xs sm:text-sm font-bold text-gray-500 hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                <ChevronLeft size={16} />
+                <span className="hidden sm:inline">Précédent</span>
+                </button>
 
-                    <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-                    Suivant
-                    <ChevronRight size={18} />
-                    </button>
-                    
+                <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Page</span>
+                    <span className="text-xs sm:text-sm font-black text-gray-500">{currentPage}</span>
+                    <span className="text-gray-300">/</span>
+                    <span className="text-xs sm:text-sm font-black text-gray-500">{totalPages}</span>
                 </div>
+
+                <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-1 text-xs sm:text-sm font-bold text-gray-500 hover:text-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                <span className="hidden sm:inline">Suivant</span>
+                <ChevronRight size={16} />
+                </button>
+                
             </div>
         </div>
       <ToolModal
