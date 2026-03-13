@@ -6,6 +6,7 @@ export const useToolActions = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  // Crée un nouvel outil et gère les états de chargement, d'erreur et de succès
   const createTool = async (toolData) => {
     try {
       setIsLoading(true);
@@ -23,6 +24,7 @@ export const useToolActions = () => {
     }
   };
 
+  // Met à jour un outil existant et gère les états de chargement, d'erreur et de succès
   const updateTool = async (id, toolData) => {
     try {
       setIsLoading(true);
@@ -40,6 +42,7 @@ export const useToolActions = () => {
     }
   };
 
+  // Supprime un outil et gère les états de chargement, d'erreur et de succès
   const deleteTool = async (id) => {
     try {
       setIsLoading(true);

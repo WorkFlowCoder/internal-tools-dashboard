@@ -6,6 +6,7 @@ export const useTools = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Cherche tous les outils et gère les états de chargement et d'erreur
   useEffect(() => {
     const fetchTools = async () => {
       try {

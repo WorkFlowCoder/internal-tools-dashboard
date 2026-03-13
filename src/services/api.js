@@ -1,5 +1,6 @@
 const API_BASE_URL = "https://tt-jsonserver-01.alt-tools.tech";
 
+// Service d'API pour interagir avec le backend JSON Server
 export const api = {
   getTools: async () => {
     try {

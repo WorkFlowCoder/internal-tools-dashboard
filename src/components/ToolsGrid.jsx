@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Calendar, ChevronRight, ChevronLeft, Edit3, Trash2 } from "lucide-react";
+import { Calendar, ChevronRight, ChevronLeft, Edit3, Trash2, Eye } from "lucide-react";
 import ToolModal from './ToolModal';
 import ToolImg from "./ToolImg";
+import { Link } from "react-router-dom";
+
 
 export default function ToolsGrid({tools,editTool,deleteTool,sortToolsDept,sortToolName}) {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -59,7 +61,7 @@ export default function ToolsGrid({tools,editTool,deleteTool,sortToolsDept,sortT
         </div>
       </div>
 
-
+      {/* En-têtes de colonnes */}
       <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_100px_80px] gap-x-4 pb-4 text-sm font-semibold text-gray-400 border-b border-gray-50 mb-4 px-2">
         <div className="cursor-pointer hover:text-gray-900 transition-colors flex items-center gap-1"
           onClick={() => requestSortName('name')}>
@@ -74,7 +76,7 @@ export default function ToolsGrid({tools,editTool,deleteTool,sortToolsDept,sortT
         <div>Actions</div>
       </div>
 
-      {/* 2. La ligne d'outil */}
+      {/* La ligne d'outil */}
       <div className="space-y-1">
         {currentTools.map((tool) => (
           <div 
@@ -120,6 +122,13 @@ export default function ToolsGrid({tools,editTool,deleteTool,sortToolsDept,sortT
                   >
                     <Trash2 size={14} />
                   </button>
+                  <Link 
+                    to={`/tools/${tool.id}`}
+                    className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md hover:scale-110 active:scale-90 transition-transform"
+                    title="Voir les détails"
+                    onClick={(e) => e.stopPropagation()}>
+                    <Eye size={18} className="transition-transform hover:scale-110" />
+                  </Link>
                 </div>
               )}
             </div>

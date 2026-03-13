@@ -49,7 +49,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Search + Icons */}
+        {/* Search (non fonctionnel) + Icons */}
         <div className="hidden sm:flex items-center gap-3">
           <div className="relative group mr-2">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -88,7 +88,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* version mobile */}
+      {/* version petit ecran */}
       {isMenuOpen && (
         <div className="md:hidden mt-4 pb-4 space-y-4 animate-in slide-in-from-top duration-200">
           <div className="relative w-full">

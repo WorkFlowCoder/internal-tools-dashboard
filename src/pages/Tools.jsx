@@ -125,7 +125,7 @@ export default function Tools() {
          </div>
       </div>
 
-      {/* 3. Ton composant Grille à qui on donne la liste filtrée */}
+      {/* LIST TOOLS */}
       <ToolsCards tools={filteredTools} editTool={editTool} deleteTool={handleDelete} />
     </div>
   );

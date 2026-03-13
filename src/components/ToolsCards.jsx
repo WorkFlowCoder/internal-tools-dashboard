@@ -20,6 +20,7 @@ export default function ToolsCards({tools,editTool,deleteTool}) {
     setIsModalOpen(false);
   };
 
+  // code pour les styles de statut
   const statusStyles = {
     active:  "bg-gradient-to-r from-emerald-400 to-emerald-600",
     unused:  "bg-gradient-to-r from-pink-500 to-rose-500",
@@ -78,6 +79,7 @@ export default function ToolsCards({tools,editTool,deleteTool}) {
                 
             </div>
         </div>
+      {/* Modal d'édition */}
       <ToolModal
         title={"Modifier "+selectedTool?.name}
         isOpen={isModalOpen}

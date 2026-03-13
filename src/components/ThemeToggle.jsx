@@ -8,20 +8,19 @@ export default function ThemeToggle() {
       (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
 
+  // Applique le thème sombre en inversant les couleurs via un filter CSS, et stocke la préférence dans localStorage
   useEffect(() => {
     if (isDark) {
       document.documentElement.style.filter = "invert(1) hue-rotate(180deg)";
       document.querySelectorAll("img, picture, video, canvas").forEach(el => {
         el.style.filter = "invert(1) hue-rotate(180deg)";
       });
-      document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.style.filter = "none";
       document.querySelectorAll("img, picture, video, canvas").forEach(el => {
         el.style.filter = "none";
       });
-      document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);

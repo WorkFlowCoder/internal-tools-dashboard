@@ -1,12 +1,11 @@
 
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { TrendingUp, Users, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { TrendingUp, Users, Wallet } from 'lucide-react';
 import KPICard from "../components/KPICard";
 import { useTools } from "../hooks/useTools";
 
 export default function Analytics() {
   const { tools, loading } = useTools();
-
   // --- CALCULS ---
   const totalCost = tools.reduce((acc, tool) => acc + (Number(tool.monthly_cost) || 0), 0) || 0;
   const prevTotalCost = tools.reduce((acc, tool) => acc + (Number(tool.previous_month_cost) || 0), 0) || 0;
@@ -16,7 +15,7 @@ export default function Analytics() {
   const percentageDiff = prevTotalCost > 0 ? ((costDiff / prevTotalCost) * 100).toFixed(1) : 0;
   const costPerUser = totalUsers > 0 ? Number((totalCost / totalUsers).toFixed(2)) : 0;
 
-  // 1. Évolution du budget (Option 3 - Réaliste avec variation)
+  // 1. Évolution du budget
   const budgetEvolutionData = [
     { month: "Sept", budget: Math.round(Math.max(prevTotalCost * 0.70, 0)) },
     { month: "Oct", budget: Math.round(Math.max(prevTotalCost * 0.76, 0)) },

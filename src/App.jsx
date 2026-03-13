@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Tools from "./pages/Tools";
 import Analytics from "./pages/Analytics";
@@ -8,13 +8,8 @@ import ToolDetail from "./pages/ToolDetail";
 function App() {
   return (
     <BrowserRouter>
-      {/* On utilise bg-gray-50 (car bg-black-50 n'existe pas par défaut en Tailwind) */}
       <div className="min-h-screen bg-gray-50 text-gray-900">
-        
-        {/* On affiche la Navbar */}
         <Navbar />
-        
-        {/* Le contenu des pages */}
         <main className="container mx-auto">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -23,7 +18,6 @@ function App() {
             <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </main>
-        
       </div>
     </BrowserRouter>
   );

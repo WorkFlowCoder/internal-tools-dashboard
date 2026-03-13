@@ -5,6 +5,7 @@ const ToolModal = ({ title, tool, isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState(tool);
   const [errors, setErrors] = useState({});
 
+  // labels pour les catégories et départements (pour les selects)
   const categories = ["Communication","Design","Development","Productivity","Project Management",
     "Sales & Marketing","Security","HR","Finance","Analytics"];
   const departements = ["Marketing","Operations","Engineering","Communication","Design"];
@@ -153,6 +154,7 @@ const ToolModal = ({ title, tool, isOpen, onClose, onSave }) => {
           </div>
 
           <div className="mt-4">
+            {/* STATUS */}
             <label className="block text-xs font-bold uppercase text-gray-400 mb-1 ml-1">Statut</label>
             <div className="relative">
               <select 
@@ -168,15 +170,15 @@ const ToolModal = ({ title, tool, isOpen, onClose, onSave }) => {
               </div>
             </div>
           </div>
-
+          
+          {/* BUTTON */}
           <div className="flex gap-4 mt-8">
             <button onClick={onClose} className="flex-1 py-3 rounded-full text-sm font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all">
               Annuler
             </button>
             <button 
               onClick={handleValidateAndSave}
-              className="flex-1 py-3 rounded-full text-sm font-bold bg-gradient-to-r from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-100 active:scale-95 transition-all"
-            >
+              className="flex-1 py-3 rounded-full text-sm font-bold bg-gradient-to-r from-emerald-400 to-emerald-600 text-white shadow-lg shadow-emerald-100 active:scale-95 transition-all">
               Enregistrer
             </button>
           </div>

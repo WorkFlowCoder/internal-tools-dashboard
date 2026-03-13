@@ -6,6 +6,7 @@ export const useTool = (id) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+    // Cherche l'outil par son ID et gère les états de chargement et d'erreur
   useEffect(() => {
     if (!id) return;
 

@@ -97,4 +97,3 @@ export default function Dashboard() {
     </div>
   );
 }
-//valueTest={`€28.750<span className="text-gray-400 font-normal">/€30k</span>}`}
